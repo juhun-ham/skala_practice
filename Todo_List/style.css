@@ -10,7 +10,6 @@ body {
   color: #222;
 }
 
-/* 전체 앱 영역 */
 .container {
   width: 90%;
   max-width: 600px;
@@ -31,7 +30,6 @@ h1 {
   color: #666;
 }
 
-/* 입력 폼 */
 .todo-form {
   display: flex;
   gap: 8px;
@@ -54,38 +52,77 @@ h1 {
   cursor: pointer;
 }
 
-/* 할 일 목록 */
+/* 개수 / 필터 / 전체 삭제 */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.todo-count {
+  margin: 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-button.active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: white;
+}
+
+.clear-all-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  cursor: pointer;
+}
+
 .todo-list {
   padding: 0;
   margin-top: 20px;
   list-style: none;
 }
 
-/* 할 일 1개 항목 */
 .todo-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-
   margin-bottom: 10px;
   padding: 12px;
-
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #ffffff;
 }
 
-/* 완료된 할 일 */
 .todo-item.done span {
   color: #999;
   text-decoration: line-through;
 }
 
-/* 완료, 삭제 버튼 영역 */
 .todo-actions {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .todo-actions button {
@@ -97,6 +134,11 @@ h1 {
 
 .done-button {
   background-color: #e5e7eb;
+}
+
+.edit-button {
+  background-color: #dbeafe;
+  color: #1d4ed8;
 }
 
 .delete-button {

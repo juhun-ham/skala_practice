@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TodoList 실습</title>
 
-    <!-- CSS 파일 연결 -->
     <link rel="stylesheet" href="style.css" />
-
-    <!-- JavaScript 파일 연결 -->
-    <!-- defer는 HTML을 먼저 읽은 뒤 JavaScript를 실행하게 한다. -->
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -17,7 +13,6 @@
       <h1>TodoList</h1>
       <p class="description">오늘 해야 할 일을 입력하고 관리해 봅니다.</p>
 
-      <!-- 할 일 입력 폼 -->
       <form id="todoForm" class="todo-form">
         <input
           type="text"
@@ -28,7 +23,25 @@
         <button type="submit">추가</button>
       </form>
 
-      <!-- 할 일 목록이 출력될 영역 -->
+      <!-- 개수 / 필터 / 전체 삭제 -->
+      <div class="toolbar">
+        <p id="todoCount" class="todo-count">할 일 0개</p>
+        <div class="filters">
+          <button type="button" class="filter-button active" data-filter="all">
+            전체
+          </button>
+          <button type="button" class="filter-button" data-filter="active">
+            진행중
+          </button>
+          <button type="button" class="filter-button" data-filter="done">
+            완료
+          </button>
+        </div>
+        <button type="button" id="clearAllBtn" class="clear-all-button">
+          전체 삭제
+        </button>
+      </div>
+
       <ul id="todoList" class="todo-list"></ul>
     </main>
   </body>

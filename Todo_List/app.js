@@ -1,96 +1,149 @@
-// 1. 요소 가져오기: input / button / ul
-
-// 2. addTodo() 만들기: 입력값 읽고 검증(trim, 빈 값 처리)
-
-// 3. li 생성/추가: 텍스트 넣고 ul에 append
-
-// 4. 삭제 처리(초심플): li 클릭 시 remove
-
-// 5. 마무리 UX: input 비우기 + focus()
-
-// 6. 이벤트 연결: 버튼 클릭 → addTodo()
-
-// 7. 이벤트 연결: Enter 키 → addTodo()
-// 1. 요소 가져오기: input / button / ul
-// (기존 주석) HTML에서 필요한 요소(태그) 가져오기
-// HTML 요소 가져오기
-const todoForm = document.querySelector("#todoForm"); // 상수 선언
+const todoForm = document.querySelector("#todoForm");
 const todoInput = document.querySelector("#todoInput");
 const todoList = document.querySelector("#todoList");
+const todoCount = document.querySelector("#todoCount");
+const clearAllBtn = document.querySelector("#clearAllBtn");
+const filterButtons = document.querySelectorAll(".filter-button");
 
-// 폼이 제출될 때 실행된다.
+// 현재 필터: all | active | done
+let currentFilter = "all";
+
 todoForm.addEventListener("submit", function (event) {
-  // form 태그는 기본적으로 제출 시 화면을 새로고침한다.
-  // TodoList에서는 새로고침이 필요 없으므로 기본 동작을 막는다.
   event.preventDefault();
 
-  // 입력값의 앞뒤 공백을 제거한다.
   const todoText = todoInput.value.trim();
 
-  // 입력값이 비어 있으면 경고창을 보여 주고 함수를 종료한다.
   if (todoText === "") {
     alert("할 일을 입력하세요.");
     todoInput.focus();
     return;
   }
 
-  // 입력한 내용을 목록에 추가한다.
   addTodo(todoText);
-
-  // 입력창을 비운다.
   todoInput.value = "";
-
-  // 다시 입력할 수 있도록 입력창에 커서를 둔다.
   todoInput.focus();
 });
 
-// 할 일을 화면에 추가하는 함수
+// 전체 삭제
+clearAllBtn.addEventListener("click", function () {
+  if (todoList.children.length === 0) {
+    alert("삭제할 할 일이 없습니다.");
+    return;
+  }
+
+  const ok = confirm("정말 모두 삭제할까요?");
+  if (!ok) return;
+
+  todoList.innerHTML = "";
+  updateCount();
+});
+
+// 필터 버튼
+filterButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    currentFilter = button.dataset.filter;
+
+    filterButtons.forEach(function (btn) {
+      btn.classList.remove("active");
+    });
+    button.classList.add("active");
+
+    applyFilter();
+  });
+});
+
 function addTodo(todoText) {
-  // li 태그를 만든다.
   const todoItem = document.createElement("li");
   todoItem.className = "todo-item";
 
-  // 할 일 내용이 들어갈 span 태그를 만든다.
   const todoTextSpan = document.createElement("span");
-
-  // textContent를 사용하면 입력한 문자를 그대로 표시한다.
-  // 예: <h1>테스트</h1>를 입력해도 HTML 태그로 실행되지 않는다.
   todoTextSpan.textContent = todoText;
 
-  // 버튼을 담을 div 태그를 만든다.
   const actionBox = document.createElement("div");
   actionBox.className = "todo-actions";
 
-  // 완료 버튼을 만든다.
   const doneButton = document.createElement("button");
   doneButton.type = "button";
   doneButton.className = "done-button";
   doneButton.textContent = "완료";
 
-  // 삭제 버튼을 만든다.
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.className = "edit-button";
+  editButton.textContent = "수정";
+
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
   deleteButton.className = "delete-button";
   deleteButton.textContent = "삭제";
 
-  // 완료 버튼을 클릭하면 done 클래스를 추가하거나 제거한다.
   doneButton.addEventListener("click", function () {
     todoItem.classList.toggle("done");
+    applyFilter();
+    updateCount();
   });
 
-  // 삭제 버튼을 클릭하면 현재 할 일 항목을 제거한다.
+  // 수정: prompt로 새 글자 받기
+  editButton.addEventListener("click", function () {
+    const next = prompt("할 일을 수정하세요", todoTextSpan.textContent);
+    if (next === null) return; // 취소
+
+    const trimmed = next.trim();
+    if (trimmed === "") {
+      alert("빈 내용은 저장할 수 없습니다.");
+      return;
+    }
+
+    todoTextSpan.textContent = trimmed;
+  });
+
   deleteButton.addEventListener("click", function () {
     todoItem.remove();
+    updateCount();
   });
 
-  // 완료 버튼과 삭제 버튼을 actionBox 안에 넣는다.
   actionBox.appendChild(doneButton);
+  actionBox.appendChild(editButton);
   actionBox.appendChild(deleteButton);
 
-  // 할 일 내용과 버튼 영역을 li 안에 넣는다.
   todoItem.appendChild(todoTextSpan);
   todoItem.appendChild(actionBox);
-
-  // 완성된 li를 ul 목록에 추가한다.
   todoList.appendChild(todoItem);
+
+  applyFilter();
+  updateCount();
+}
+
+// 1. 남은/전체 개수 표시
+function updateCount() {
+  const total = todoList.children.length;
+  let done = 0;
+
+  for (let i = 0; i < todoList.children.length; i++) {
+    if (todoList.children[i].classList.contains("done")) {
+      done++;
+    }
+  }
+
+  const left = total - done;
+  todoCount.textContent =
+    "전체 " + total + "개 · 남은 일 " + left + "개 · 완료 " + done + "개";
+}
+
+// 4. 필터 적용
+function applyFilter() {
+  const items = todoList.children;
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const isDone = item.classList.contains("done");
+
+    if (currentFilter === "all") {
+      item.style.display = "flex";
+    } else if (currentFilter === "active") {
+      item.style.display = isDone ? "none" : "flex";
+    } else if (currentFilter === "done") {
+      item.style.display = isDone ? "flex" : "none";
+    }
+  }
 }
