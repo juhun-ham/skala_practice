@@ -3,46 +3,320 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TodoList 실습</title>
-
+    <title>TodoList</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <script src="app.js" defer></script>
   </head>
   <body>
-    <main class="container">
-      <h1>TodoList</h1>
-      <p class="description">오늘 해야 할 일을 입력하고 관리해 봅니다.</p>
+    <div class="page-bg" aria-hidden="true"></div>
 
-      <form id="todoForm" class="todo-form">
-        <input
-          type="text"
-          id="todoInput"
-          placeholder="할 일을 입력하세요"
-          autocomplete="off"
-        />
-        <button type="submit">추가</button>
-      </form>
+    <button
+      type="button"
+      id="sidebarOpenBtn"
+      class="sidebar-open-btn"
+      aria-label="리스트 메뉴 열기"
+    >
+      메뉴
+    </button>
 
-      <!-- 개수 / 필터 / 전체 삭제 -->
-      <div class="toolbar">
-        <p id="todoCount" class="todo-count">할 일 0개</p>
-        <div class="filters">
-          <button type="button" class="filter-button active" data-filter="all">
-            전체
-          </button>
-          <button type="button" class="filter-button" data-filter="active">
-            진행중
-          </button>
-          <button type="button" class="filter-button" data-filter="done">
-            완료
+    <div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+
+    <div class="app-shell">
+      <aside id="sidebar" class="sidebar" aria-label="리스트">
+        <div class="sidebar-head">
+          <p class="sidebar-label">Lists</p>
+          <div class="sidebar-head-actions">
+            <button type="button" id="addListBtn" class="sidebar-add">
+              + 추가
+            </button>
+            <button
+              type="button"
+              id="sidebarCloseBtn"
+              class="sidebar-close-btn"
+              aria-label="리스트 메뉴 닫기"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+
+        <ul id="listNav" class="list-nav"></ul>
+
+        <form id="listForm" class="list-form" hidden>
+          <input
+            type="text"
+            id="listInput"
+            placeholder="리스트 이름"
+            maxlength="20"
+            autocomplete="off"
+            aria-label="리스트 이름"
+          />
+          <div class="list-form-actions">
+            <button type="submit" class="save-button action-button">저장</button>
+            <button
+              type="button"
+              id="listFormCancel"
+              class="cancel-button action-button"
+            >
+              취소
+            </button>
+          </div>
+        </form>
+
+        <section class="status-panel" aria-label="진행 상태">
+          <div class="status-top">
+            <span id="levelLabel" class="level-label">Lv.1</span>
+            <span id="xpLabel" class="xp-label">0 XP</span>
+          </div>
+          <div class="meter" aria-hidden="true">
+            <div id="xpBarFill" class="meter-fill"></div>
+          </div>
+          <p id="streakLabel" class="streak-label">연속 0일</p>
+          <div class="daily-goal">
+            <div class="daily-goal-head">
+              <span id="questTitle">오늘 목표</span>
+              <span id="dailyGoalLabel">0 / 3</span>
+            </div>
+            <div class="meter" aria-hidden="true">
+              <div id="dailyBarFill" class="meter-fill daily"></div>
+            </div>
+          </div>
+
+          <div class="side-quests">
+            <p class="side-quests-label">사이드 퀘스트</p>
+            <ul id="sideQuestList" class="side-quest-list"></ul>
+          </div>
+
+          <div class="achievements">
+            <p class="achievements-label">업적</p>
+            <ul id="achievementList" class="achievement-list"></ul>
+          </div>
+        </section>
+      </aside>
+
+      <main class="container">
+        <header class="app-header">
+          <p class="eyebrow">Daily Focus</p>
+          <h1 id="mainTitle">TodoList</h1>
+          <p class="description">오늘 해야 할 일을 입력하고 관리해 봅니다.</p>
+        </header>
+
+        <form id="todoForm" class="todo-form">
+          <input
+            type="text"
+            id="todoInput"
+            placeholder="할 일을 입력하세요"
+            autocomplete="off"
+            aria-label="할 일 입력"
+          />
+          <select id="prioritySelect" class="priority-select" aria-label="우선순위">
+            <option value="medium">보통</option>
+            <option value="high">높음</option>
+            <option value="low">낮음</option>
+          </select>
+          <input
+            type="date"
+            id="dueDateInput"
+            class="due-date-input"
+            aria-label="마감일"
+          />
+          <button type="submit">추가</button>
+        </form>
+
+        <div class="tools-row">
+          <label class="search-field">
+            <span class="visually-hidden">검색</span>
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="검색..."
+              autocomplete="off"
+            />
+          </label>
+          <label class="sort-field">
+            <span class="visually-hidden">정렬</span>
+            <select id="sortSelect" aria-label="정렬">
+              <option value="manual">수동 순서</option>
+              <option value="newest">최신순</option>
+              <option value="due">마감순</option>
+              <option value="priority">우선순위</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="toolbar">
+          <p id="todoCount" class="todo-count">할 일 0개</p>
+          <div class="filters" role="group" aria-label="필터">
+            <button
+              type="button"
+              class="filter-button active"
+              data-filter="all"
+            >
+              전체
+            </button>
+            <button type="button" class="filter-button" data-filter="active">
+              진행중
+            </button>
+            <button type="button" class="filter-button" data-filter="done">
+              완료
+            </button>
+          </div>
+          <button type="button" id="clearAllBtn" class="clear-all-button">
+            전체 삭제
           </button>
         </div>
-        <button type="button" id="clearAllBtn" class="clear-all-button">
-          전체 삭제
-        </button>
-      </div>
 
-      <ul id="todoList" class="todo-list"></ul>
-    </main>
+        <div id="emptyState" class="empty-state" hidden>
+          <div class="empty-mark" aria-hidden="true"></div>
+          <p class="empty-title">아직 할 일이 없어요</p>
+          <p class="empty-desc">위에서 할 일을 입력하고 추가해 보세요.</p>
+        </div>
+
+        <ul id="todoList" class="todo-list"></ul>
+
+        <section class="planner" aria-label="계획표">
+          <div class="planner-tabs" role="tablist" aria-label="계획 보기">
+            <button
+              type="button"
+              class="planner-tab active"
+              data-planner="daily"
+              role="tab"
+              aria-selected="true"
+            >
+              일일 계획
+            </button>
+            <button
+              type="button"
+              class="planner-tab"
+              data-planner="weekly"
+              role="tab"
+              aria-selected="false"
+            >
+              주간 계획
+            </button>
+            <button
+              type="button"
+              class="planner-tab"
+              data-planner="calendar"
+              role="tab"
+              aria-selected="false"
+            >
+              달력
+            </button>
+          </div>
+
+          <div id="plannerDaily" class="planner-panel" role="tabpanel">
+            <div class="planner-date-nav">
+              <button type="button" id="dailyPrevBtn" aria-label="이전 날">
+                ‹
+              </button>
+              <h2 id="dailyDateLabel" class="planner-date-label">오늘</h2>
+              <button type="button" id="dailyNextBtn" aria-label="다음 날">
+                ›
+              </button>
+              <button type="button" id="dailyTodayBtn" class="planner-today-btn">
+                오늘
+              </button>
+            </div>
+            <div class="daily-summary" id="dailySummary"></div>
+            <div class="daily-focus">
+              <h3>오늘의 포커스</h3>
+              <ul id="dailyFocusList" class="planner-mini-list"></ul>
+            </div>
+            <div class="daily-blocks">
+              <div class="daily-block">
+                <h3>오전</h3>
+                <ul id="dailyMorningList" class="planner-mini-list"></ul>
+              </div>
+              <div class="daily-block">
+                <h3>오후</h3>
+                <ul id="dailyAfternoonList" class="planner-mini-list"></ul>
+              </div>
+              <div class="daily-block">
+                <h3>저녁</h3>
+                <ul id="dailyEveningList" class="planner-mini-list"></ul>
+              </div>
+            </div>
+            <label class="daily-note-field">
+              <span>하루 메모</span>
+              <textarea
+                id="dailyNoteInput"
+                rows="3"
+                placeholder="오늘 목표, 회고, 메모를 적어 보세요."
+              ></textarea>
+            </label>
+          </div>
+
+          <div id="plannerWeekly" class="planner-panel" role="tabpanel" hidden>
+            <div class="planner-date-nav">
+              <button type="button" id="weeklyPrevBtn" aria-label="이전 주">
+                ‹
+              </button>
+              <h2 id="weeklyRangeLabel" class="planner-date-label">이번 주</h2>
+              <button type="button" id="weeklyNextBtn" aria-label="다음 주">
+                ›
+              </button>
+              <button
+                type="button"
+                id="weeklyTodayBtn"
+                class="planner-today-btn"
+              >
+                이번 주
+              </button>
+            </div>
+            <div id="weeklyGrid" class="weekly-grid"></div>
+          </div>
+
+          <div
+            id="plannerCalendar"
+            class="planner-panel"
+            role="tabpanel"
+            hidden
+          >
+            <div class="planner-date-nav">
+              <button type="button" id="calPrevBtn" aria-label="이전 달">
+                ‹
+              </button>
+              <h2 id="calMonthLabel" class="planner-date-label">2026.7</h2>
+              <button type="button" id="calNextBtn" aria-label="다음 달">
+                ›
+              </button>
+              <button type="button" id="calTodayBtn" class="planner-today-btn">
+                이번 달
+              </button>
+            </div>
+            <div id="calendarGrid" class="calendar-grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <div id="fxBurst" class="fx-burst" aria-hidden="true"></div>
+
+    <div id="confirmModal" class="modal" hidden>
+      <div class="modal-backdrop" data-modal-close></div>
+      <div
+        class="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmTitle"
+      >
+        <h2 id="confirmTitle" class="modal-title">확인</h2>
+        <p id="confirmMessage" class="modal-message">계속할까요?</p>
+        <div class="modal-actions">
+          <button type="button" id="confirmCancel" class="modal-cancel">
+            취소
+          </button>
+          <button type="button" id="confirmOk" class="modal-ok">확인</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
