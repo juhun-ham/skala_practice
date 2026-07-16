@@ -12,6 +12,7 @@ const submitButton = document.querySelector("#submitButton");
 const cancelEditButton = document.querySelector("#cancelEditButton");
 const searchInput = document.querySelector("#searchInput");
 const statusFilter = document.querySelector("#statusFilter");
+const sortSelect = document.querySelector("#sortSelect");
 
 const countText = document.querySelector("#countText");
 const emptyMessage = document.querySelector("#emptyMessage");
@@ -67,7 +68,7 @@ function getFilteredCars() {
   const keyword = searchInput.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
 
-  return cars.filter(function (car) {
+  const filtered = cars.filter(function (car) {
     const searchText = `${car.maker} ${car.model}`.toLowerCase();
     const matchKeyword = searchText.includes(keyword);
     const matchStatus =
@@ -75,6 +76,35 @@ function getFilteredCars() {
 
     return matchKeyword && matchStatus;
   });
+
+  return sortCars(filtered);
+}
+
+// 선택한 정렬 기준에 따라 차량 목록을 정렬
+function sortCars(carsToSort) {
+  const sortedCars = [...carsToSort];
+  const sortOption = sortSelect.value;
+
+  if (sortOption === "priceAsc") {
+    sortedCars.sort(function (a, b) {
+      return a.price - b.price;
+    });
+  } else if (sortOption === "priceDesc") {
+    sortedCars.sort(function (a, b) {
+      return b.price - a.price;
+    });
+  } else if (sortOption === "yearDesc") {
+    sortedCars.sort(function (a, b) {
+      return b.year - a.year;
+    });
+  } else {
+    // 최신 등록순: id가 클수록 최근에 등록된 차량이다.
+    sortedCars.sort(function (a, b) {
+      return b.id - a.id;
+    });
+  }
+
+  return sortedCars;
 }
 // 차량 카드 생성
 function createCarCard(car) {
@@ -111,8 +141,16 @@ function createCarCard(car) {
   deleteButton.dataset.id = car.id;
   deleteButton.textContent = "삭제";
 
+  const priceCheckLink = document.createElement("a");
+  priceCheckLink.className = "price-check-button";
+  priceCheckLink.href = getPriceCheckUrl(car);
+  priceCheckLink.target = "_blank";
+  priceCheckLink.rel = "noopener noreferrer";
+  priceCheckLink.textContent = "시세 확인 ↗";
+
   actions.appendChild(editButton);
   actions.appendChild(deleteButton);
+  actions.appendChild(priceCheckLink);
 
   card.appendChild(title);
   card.appendChild(info);
@@ -121,6 +159,12 @@ function createCarCard(car) {
   card.appendChild(actions);
 
   return card;
+}
+
+// 케이카(kcar.com)에서 같은 차량을 검색할 수 있는 URL 생성
+function getPriceCheckUrl(car) {
+  const keyword = `${car.maker} ${car.model}`;
+  return `https://www.kcar.com/bc/search/IntgSearchList?searchWord=${encodeURIComponent(keyword)}`;
 }
 
 // 입력 폼을 리셋
@@ -188,6 +232,9 @@ searchInput.addEventListener("input", renderCars);
 
 // 판매 상태를 바꿀 때마다 목록을 다시 그린다.
 statusFilter.addEventListener("change", renderCars);
+
+// 정렬 기준을 바꿀 때마다 목록을 다시 그린다.
+sortSelect.addEventListener("change", renderCars);
 
 // 수정 취소
 cancelEditButton.addEventListener("click", function () {

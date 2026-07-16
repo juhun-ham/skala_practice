@@ -145,16 +145,20 @@ button {
 
 .search-area {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 16px;
 }
 
 #searchInput {
   flex: 3;
+  min-width: 160px;
 }
 
-#statusFilter {
+#statusFilter,
+#sortSelect {
   flex: 1;
+  min-width: 130px;
 }
 
 .car-list {
@@ -210,18 +214,37 @@ button {
 
 .card-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
 }
 
-.card-actions button {
+.card-actions button,
+.card-actions .price-check-button {
   flex: 1;
+  min-width: 90px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
   background-color: #e5e7eb;
+  font-size: 14px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .card-actions .delete-button {
   color: white;
   background-color: #ef4444;
+}
+
+.card-actions .price-check-button {
+  color: white;
+  background-color: #059669;
+}
+
+.card-actions .price-check-button:hover {
+  background-color: #047857;
 }
 
 .empty-message {
