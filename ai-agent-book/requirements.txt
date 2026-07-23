@@ -1,0 +1,4 @@
+langchain>=1,<2
+langchain-openai>=1,<2
+langgraph>=1,<2
+python-dotenv>=1,<2
