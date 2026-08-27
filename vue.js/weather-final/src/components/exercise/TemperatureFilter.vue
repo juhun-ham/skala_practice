@@ -1,20 +1,20 @@
 <script setup>
-import { useConfigStore } from "@/stores/configStore";
+import { useConfigStore } from '@/stores/configStore'
 
-const configStore = useConfigStore();
+const configStore = useConfigStore()
 
 defineProps({
   hotOnly: {
     type: Boolean,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(["update-hot-only"]);
+const emit = defineEmits(['update-hot-only'])
 
 const handleChange = (value) => {
-  emit("update-hot-only", value);
-};
+  emit('update-hot-only', value)
+}
 </script>
 
 <template>
@@ -42,7 +42,8 @@ const handleChange = (value) => {
   gap: 8px;
   margin-top: 18px;
   padding: 14px 16px;
-  background: #f5f7fa;
+  background: #f4f7fb;
+  border: 1px solid #dce5f0;
   border-radius: 10px;
 }
 

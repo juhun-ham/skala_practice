@@ -1,18 +1,18 @@
 <script setup>
-import { Search } from "@element-plus/icons-vue";
+import { Search } from '@element-plus/icons-vue'
 
 defineProps({
   currentQuery: {
     type: String,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(["update-query"]);
+const emit = defineEmits(['update-query'])
 
 const handleInput = (value) => {
-  emit("update-query", value);
-};
+  emit('update-query', value)
+}
 </script>
 
 <template>

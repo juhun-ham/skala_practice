@@ -1,8 +1,8 @@
 <script setup>
-import { Minus, Plus, Refresh } from "@element-plus/icons-vue";
-import { useConfigStore } from "@/stores/configStore";
+import { Minus, Plus, Refresh } from '@element-plus/icons-vue'
+import { useConfigStore } from '@/stores/configStore'
 
-const configStore = useConfigStore();
+const configStore = useConfigStore()
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const configStore = useConfigStore();
     <div class="setting-item">
       <span class="setting-label">날씨 단위</span>
       <el-tag size="large" effect="light">
-        {{ configStore.unit === "celsius" ? "섭씨" : "화씨" }}
+        {{ configStore.unit === 'celsius' ? '섭씨' : '화씨' }}
         ({{ configStore.unitSymbol }})
       </el-tag>
       <el-button type="primary" plain :icon="Refresh" @click="configStore.toggleUnit">
@@ -24,8 +24,16 @@ const configStore = useConfigStore();
       <span class="setting-label">더움 기준</span>
       <strong>{{ configStore.hotThresholdLabel }}</strong>
       <el-button-group>
-        <el-button :icon="Minus" aria-label="더움 기준 1도 낮추기" @click="configStore.decreaseHotThreshold"></el-button>
-        <el-button :icon="Plus" aria-label="더움 기준 1도 높이기" @click="configStore.increaseHotThreshold"></el-button>
+        <el-button
+          :icon="Minus"
+          aria-label="더움 기준 1도 낮추기"
+          @click="configStore.decreaseHotThreshold"
+        ></el-button>
+        <el-button
+          :icon="Plus"
+          aria-label="더움 기준 1도 높이기"
+          @click="configStore.increaseHotThreshold"
+        ></el-button>
       </el-button-group>
     </div>
   </div>
@@ -37,8 +45,8 @@ const configStore = useConfigStore();
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  background: #f5f7fa;
-  border: 1px solid #e4e7ed;
+  background: #f4f7fb;
+  border: 1px solid #dce5f0;
   border-radius: 12px;
 }
 

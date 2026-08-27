@@ -1,36 +1,36 @@
 <script setup>
-import { computed } from "vue";
-import { ArrowRight } from "@element-plus/icons-vue";
-import { useConfigStore } from "@/stores/configStore";
+import { computed } from 'vue'
+import { ArrowRight } from '@element-plus/icons-vue'
+import { useConfigStore } from '@/stores/configStore'
 
-const configStore = useConfigStore();
+const configStore = useConfigStore()
 
 const props = defineProps({
   cityItem: {
     type: Object,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(["select-card", "click-detail"]);
+const emit = defineEmits(['select-card', 'click-detail'])
 
 const displayTemp = computed(() => {
-  const rawTemp = props.cityItem.temp;
+  const rawTemp = props.cityItem.temp
 
-  if (configStore.unit === "fahrenheit") {
-    return Math.round((rawTemp * 9) / 5 + 32);
+  if (configStore.unit === 'fahrenheit') {
+    return Math.round((rawTemp * 9) / 5 + 32)
   }
 
-  return rawTemp;
-});
+  return rawTemp
+})
 
 const handleCardClick = () => {
-  emit("select-card", props.cityItem);
-};
+  emit('select-card', props.cityItem)
+}
 
 const handleDetailClick = () => {
-  emit("click-detail", props.cityItem);
-};
+  emit('click-detail', props.cityItem)
+}
 </script>
 
 <template>
@@ -38,8 +38,11 @@ const handleDetailClick = () => {
     <div class="card-content">
       <div>
         <div class="city-title">
+          <span class="weather-emoji" role="img" :aria-label="cityItem.status">
+            {{ cityItem.emoji }}
+          </span>
           <strong>{{ cityItem.name }}</strong>
-          <el-tag effect="plain" round>{{ cityItem.status }}</el-tag>
+          <el-tag :type="cityItem.statusTagType" effect="plain" round>{{ cityItem.status }}</el-tag>
         </div>
 
         <p class="temperature">
@@ -51,7 +54,7 @@ const handleDetailClick = () => {
           effect="dark"
           round
         >
-          {{ cityItem.temp >= configStore.hotThreshold ? "🔥 더움" : "❄️ 선선함" }}
+          {{ cityItem.temp >= configStore.hotThreshold ? '🔥 더움' : '❄️ 선선함' }}
         </el-tag>
       </div>
 
@@ -65,13 +68,17 @@ const handleDetailClick = () => {
 <style scoped>
 .weather-card {
   margin-top: 12px;
+  border: 1px solid #dce5f0;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .weather-card:hover {
-  transform: translateY(-2px);
+  border-color: #8fb0dc;
+  box-shadow: 0 8px 20px rgb(36 88 166 / 9%);
 }
 
 .card-content,
@@ -86,9 +93,14 @@ const handleDetailClick = () => {
   justify-content: flex-start;
 }
 
+.weather-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
 .temperature {
   margin: 10px 0;
-  color: #303133;
+  color: #173b6c;
   font-size: 30px;
   font-weight: 700;
   line-height: 1;

@@ -1,17 +1,17 @@
 <script setup>
-import { computed } from "vue";
-import { RouterView, useRoute } from "vue-router";
-import ko from "element-plus/es/locale/lang/ko";
-import UnitToggler from "@/components/exercise/UnitToggler.vue";
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
+import ko from 'element-plus/es/locale/lang/ko'
+import UnitToggler from '@/components/exercise/UnitToggler.vue'
 
-const route = useRoute();
+const route = useRoute()
 
 const activeMenu = computed(() => {
-  if (route.path === "/weather/about") return "/weather/about";
-  if (route.path === "/weather/guide") return "/weather/guide";
+  if (route.path === '/weather/about') return '/weather/about'
+  if (route.path === '/weather/guide') return '/weather/guide'
 
-  return "/weather";
-});
+  return '/weather'
+})
 </script>
 
 <template>
@@ -29,8 +29,8 @@ const activeMenu = computed(() => {
             class="navigation-menu"
           >
             <el-menu-item index="/weather">날씨 대시보드</el-menu-item>
-            <el-menu-item index="/weather/about">서비스 소개</el-menu-item>
             <el-menu-item index="/weather/guide">날씨 가이드</el-menu-item>
+            <el-menu-item index="/weather/about">서비스 소개</el-menu-item>
           </el-menu>
         </div>
 
@@ -52,10 +52,9 @@ const activeMenu = computed(() => {
   top: 0;
   z-index: 100;
   width: 100%;
-  background: rgba(255, 255, 255, 0.96);
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 4px 18px rgba(31, 45, 61, 0.06);
-  backdrop-filter: blur(12px);
+  background: #ffffff;
+  border-bottom: 1px solid #dce5f0;
+  box-shadow: 0 2px 10px rgb(23 59 108 / 6%);
 }
 
 .header-inner {
@@ -77,7 +76,7 @@ const activeMenu = computed(() => {
 
 .brand {
   flex: none;
-  color: #1f2937;
+  color: #173b6c;
   font-size: 18px;
   font-weight: bold;
 }
@@ -85,6 +84,8 @@ const activeMenu = computed(() => {
 .navigation-menu {
   min-width: 410px;
   border-bottom: none !important;
+  --el-menu-active-color: #2458a6;
+  --el-menu-hover-bg-color: #f1f5fb;
 }
 
 .unit-control {
@@ -93,7 +94,7 @@ const activeMenu = computed(() => {
 
 .page-content {
   min-height: calc(100vh - 73px);
-  padding: 40px 24px 64px;
+  padding: 36px 24px 64px;
 }
 
 @media (max-width: 1040px) {
