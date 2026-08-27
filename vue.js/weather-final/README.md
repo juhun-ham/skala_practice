@@ -7,7 +7,7 @@ Vue.js 수업에서 진행한 날씨 과제를 바탕으로 만든 최종 프로
 ## 프로젝트 링크
 
 - GitHub: https://github.com/juhun-ham/skala_practice/tree/main/vue.js/weather-final
-- 배포 주소: Vercel 배포 완료 후 추가 예정
+- 배포 주소: skala-practice-lnaimn3hz-juhun-ham.vercel.app
 
 ## 과제 진행 과정
 
