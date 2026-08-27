@@ -1,15 +1,17 @@
 <template>
-  <section class="dashboard-card">
+  <el-card class="dashboard-card" shadow="never">
     <slot></slot>
-  </section>
+  </el-card>
 </template>
 
 <style scoped>
 .dashboard-card {
   margin-bottom: 16px;
-  padding: 20px;
-  background-color: #f7f9fb;
-  border: 1px solid #dfe5eb;
-  border-radius: 10px;
+  border: 1px solid #e4e7ed;
+  border-radius: 14px;
+}
+
+.dashboard-card :deep(.el-card__body) {
+  padding: 22px;
 }
 </style>

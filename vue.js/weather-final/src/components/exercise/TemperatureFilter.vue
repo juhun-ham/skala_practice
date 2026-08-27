@@ -12,30 +12,43 @@ defineProps({
 
 const emit = defineEmits(["update-hot-only"]);
 
-const handleChange = (event) => {
-  emit("update-hot-only", event.target.checked);
+const handleChange = (value) => {
+  emit("update-hot-only", value);
 };
 </script>
 
 <template>
-  <label class="temperature-filter">
-    <input type="checkbox" :checked="hotOnly" @change="handleChange" />
+  <div class="temperature-filter">
+    <div>
+      <strong>더운 도시 필터</strong>
+      <p>{{ configStore.hotThresholdLabel }} 이상인 도시만 표시합니다.</p>
+    </div>
 
-    <span> {{ configStore.hotThresholdLabel }} 이상인 도시만 보기</span>
-  </label>
+    <el-switch
+      :model-value="hotOnly"
+      @change="handleChange"
+      inline-prompt
+      active-text="ON"
+      inactive-text="OFF"
+    ></el-switch>
+  </div>
 </template>
 
 <style scoped>
 .temperature-filter {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
-  cursor: pointer;
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: #f5f7fa;
+  border-radius: 10px;
 }
 
-.temperature-filter input {
-  width: 18px;
-  height: 18px;
+.temperature-filter p {
+  margin: 2px 0 0;
+  color: #909399;
+  font-size: 13px;
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+import { Refresh } from "@element-plus/icons-vue";
 
 import BaseDashboardCard from "@/components/exercise/BaseDashboardCard.vue";
 import SearchBar from "@/components/exercise/SearchBar.vue";
@@ -107,6 +108,19 @@ const displayedWeatherList = computed(() => {
   return filteredWeatherList.value.filter((weather) => weather.temp >= configStore.hotThreshold);
 });
 
+const averageTemp = computed(() => {
+  if (weatherList.value.length === 0) return 0;
+
+  const total = weatherList.value.reduce((sum, weather) => sum + weather.temp, 0);
+  const celsiusAverage = total / weatherList.value.length;
+
+  if (configStore.unit === "fahrenheit") {
+    return Math.round((celsiusAverage * 9) / 5 + 32);
+  }
+
+  return Math.round(celsiusAverage);
+});
+
 // 카드 선택 처리
 const selectCity = (weather) => {
   selectedCityInfo.value = weather;
@@ -149,7 +163,22 @@ const updateHotOnly = (newValue) => {
 
 <template>
   <main class="weather-page">
-    <h1>🌤️ 실시간 날씨 대시보드</h1>
+    <section class="dashboard-hero">
+      <div>
+        <el-tag type="primary" effect="dark" round>LIVE WEATHER</el-tag>
+        <h1>실시간 날씨 대시보드</h1>
+        <p>OpenWeather 데이터를 이용해 지역별 현재 날씨를 한눈에 확인하세요.</p>
+      </div>
+
+      <div class="summary-grid">
+        <el-statistic title="조회 도시" :value="weatherList.length" suffix="곳"></el-statistic>
+        <el-statistic
+          title="평균 기온"
+          :value="averageTemp"
+          :suffix="configStore.unitSymbol"
+        ></el-statistic>
+      </div>
+    </section>
 
     <BaseDashboardCard>
       <SearchBar :current-query="searchQuery" @update-query="updateSearchQuery" />
@@ -157,14 +186,28 @@ const updateHotOnly = (newValue) => {
     </BaseDashboardCard>
 
     <BaseDashboardCard>
-      <h3>🏙️ 지역별 실시간 날씨 현황</h3>
+      <div class="list-heading">
+        <div>
+          <h2>지역별 실시간 날씨</h2>
+          <p>마지막 요청을 기준으로 {{ displayedWeatherList.length }}개 도시를 표시합니다.</p>
+        </div>
 
-      <p v-if="isLoading">날씨 데이터를 불러오는 중입니다...</p>
+        <el-button :icon="Refresh" circle aria-label="날씨 새로고침" @click="loadWeatherList"></el-button>
+      </div>
 
-      <div v-else-if="errorMessage" class="error-message">
-        <p>날씨 요청 실패: {{ errorMessage }}</p>
+      <el-skeleton v-if="isLoading" :rows="6" animated></el-skeleton>
 
-        <button @click="loadWeatherList">다시 불러오기</button>
+      <div v-else-if="errorMessage">
+        <el-alert
+          title="날씨 데이터를 가져오지 못했습니다."
+          :description="errorMessage"
+          type="error"
+          show-icon
+          :closable="false"
+        ></el-alert>
+        <el-button class="retry-button" type="primary" @click="loadWeatherList">
+          다시 불러오기
+        </el-button>
       </div>
 
       <template v-else>
@@ -176,70 +219,100 @@ const updateHotOnly = (newValue) => {
           @click-detail="showDetail"
         />
 
-        <p v-if="displayedWeatherList.length === 0">검색 조건과 일치하는 도시가 없습니다.</p>
+        <el-empty
+          v-if="displayedWeatherList.length === 0"
+          description="검색 조건과 일치하는 도시가 없습니다."
+        ></el-empty>
       </template>
     </BaseDashboardCard>
 
-    <div class="status-bar">
-      {{
+    <el-alert
+      :title="
         selectedCityInfo
           ? `${selectedCityInfo.name}이 선택되었습니다.`
-          : "카드를 클릭하거나 검색해 보세요."
-      }}
-    </div>
+          : '카드를 클릭하거나 검색해 보세요.'
+      "
+      type="success"
+      show-icon
+      :closable="false"
+    ></el-alert>
   </main>
 </template>
 
 <style scoped>
 .weather-page {
-  width: min(680px, calc(100% - 40px));
-  margin: 40px auto;
-  padding: 28px;
-  background-color: white;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
+  width: min(920px, 100%);
+  margin: 0 auto;
 }
 
-.weather-page > h1 {
-  margin: 0 0 24px;
-  padding-bottom: 16px;
-  font-size: 26px;
-  border-bottom: 1px solid #dddddd;
+.dashboard-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 24px;
+  padding: 30px;
+  color: white;
+  background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(37, 99, 235, 0.18);
 }
 
-.assignment-ready {
-  padding: 18px;
-  background-color: #f7f9fb;
-  border: 1px solid #e2e6ea;
-  border-radius: 8px;
+.dashboard-hero h1 {
+  margin: 14px 0 6px;
+  font-size: clamp(26px, 4vw, 38px);
 }
 
-.assignment-ready h2 {
-  margin-top: 0;
+.dashboard-hero p,
+.list-heading p {
+  margin: 0;
 }
 
-.assignment-ready p {
-  margin-bottom: 0;
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(110px, 1fr));
+  gap: 12px;
 }
 
-.status-bar {
-  padding: 12px;
-  color: #218838;
-  background-color: #e4f7e8;
-  border-radius: 8px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.error-message {
+.summary-grid :deep(.el-statistic) {
+  min-width: 120px;
   padding: 14px;
-  color: #d63031;
-  background-color: #fff0f0;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
 }
 
-.error-message button {
-  padding: 8px 12px;
-  cursor: pointer;
+.summary-grid :deep(.el-statistic__head),
+.summary-grid :deep(.el-statistic__content) {
+  color: white;
+}
+
+.list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.list-heading h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.list-heading p {
+  color: #909399;
+  font-size: 13px;
+}
+
+.retry-button {
+  margin-top: 12px;
+}
+
+@media (max-width: 680px) {
+  .dashboard-hero {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 22px;
+  }
 }
 </style>

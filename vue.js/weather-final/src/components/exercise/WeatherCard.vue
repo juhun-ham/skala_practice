@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { ArrowRight } from "@element-plus/icons-vue";
 import { useConfigStore } from "@/stores/configStore";
 
 const configStore = useConfigStore();
@@ -33,64 +34,76 @@ const handleDetailClick = () => {
 </script>
 
 <template>
-  <article class="weather-card" @click="handleCardClick">
-    <div>
-      <strong> {{ cityItem.name }} ({{ cityItem.status }}) </strong>
+  <el-card class="weather-card" shadow="hover" @click="handleCardClick">
+    <div class="card-content">
+      <div>
+        <div class="city-title">
+          <strong>{{ cityItem.name }}</strong>
+          <el-tag effect="plain" round>{{ cityItem.status }}</el-tag>
+        </div>
 
-      <p>
-        현재 기온:
-        {{ displayTemp }}{{ configStore.unitSymbol }}
-      </p>
+        <p class="temperature">
+          {{ displayTemp }}<small>{{ configStore.unitSymbol }}</small>
+        </p>
 
-      <span :class="cityItem.temp >= configStore.hotThreshold ? 'hot' : 'cool'">
-        {{ cityItem.temp >= configStore.hotThreshold ? "🔥 더움" : "❄️ 선선함" }}
-      </span>
+        <el-tag
+          :type="cityItem.temp >= configStore.hotThreshold ? 'danger' : 'primary'"
+          effect="dark"
+          round
+        >
+          {{ cityItem.temp >= configStore.hotThreshold ? "🔥 더움" : "❄️ 선선함" }}
+        </el-tag>
+      </div>
+
+      <el-button type="primary" plain :icon="ArrowRight" @click.stop="handleDetailClick">
+        상세보기
+      </el-button>
     </div>
-
-    <button @click.stop="handleDetailClick">상세보기</button>
-  </article>
+  </el-card>
 </template>
 
 <style scoped>
 .weather-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-top: 12px;
-  padding: 16px;
-  background-color: white;
-  border: 1px solid #dfe5eb;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .weather-card:hover {
-  border-color: #42b883;
+  transform: translateY(-2px);
 }
 
-.weather-card p {
-  margin: 6px 0;
+.card-content,
+.city-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-.weather-card button {
-  padding: 7px 12px;
-  cursor: pointer;
+.city-title {
+  justify-content: flex-start;
 }
 
-.hot,
-.cool {
-  display: inline-block;
-  padding: 4px 8px;
-  color: white;
-  border-radius: 5px;
-  font-size: 13px;
+.temperature {
+  margin: 10px 0;
+  color: #303133;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.hot {
-  background-color: #ff6b6b;
+.temperature small {
+  margin-left: 2px;
+  color: #909399;
+  font-size: 15px;
 }
 
-.cool {
-  background-color: #4dabf7;
+@media (max-width: 520px) {
+  .card-content {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 # 실시간 날씨 서비스
 
-Vue 3, Vue Router, Pinia, Axios와 OpenWeather API로 만든 최종 날씨 프로젝트입니다.
+Vue 3, Vue Router, Pinia, Axios, Element Plus와 OpenWeather API로 만든 최종 날씨 프로젝트입니다.
 
 ## 주요 기능
 
@@ -8,6 +8,7 @@ Vue 3, Vue Router, Pinia, Axios와 OpenWeather API로 만든 최종 날씨 프�
 - 도시 검색과 더운 도시 필터
 - 섭씨·화씨 단위 전환 및 더움 기준 조절
 - 도시별 현재 날씨와 5일 예보 상세 페이지
+- Element Plus 기반 반응형 대시보드와 개발 과정 타임라인
 - 서비스 소개, 날씨 가이드, 404 페이지 라우팅
 
 ## 실행 방법

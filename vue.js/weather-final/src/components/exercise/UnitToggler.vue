@@ -1,4 +1,5 @@
 <script setup>
+import { Minus, Plus, Refresh } from "@element-plus/icons-vue";
 import { useConfigStore } from "@/stores/configStore";
 
 const configStore = useConfigStore();
@@ -6,20 +7,26 @@ const configStore = useConfigStore();
 
 <template>
   <div class="unit-toggler">
-    <span>
-      날씨 단위:
-      {{ configStore.unit === "celsius" ? "섭씨" : "화씨" }}
-      ({{ configStore.unitSymbol }})
-    </span>
+    <div class="setting-item">
+      <span class="setting-label">날씨 단위</span>
+      <el-tag size="large" effect="light">
+        {{ configStore.unit === "celsius" ? "섭씨" : "화씨" }}
+        ({{ configStore.unitSymbol }})
+      </el-tag>
+      <el-button type="primary" plain :icon="Refresh" @click="configStore.toggleUnit">
+        단위 변경
+      </el-button>
+    </div>
 
-    <button @click="configStore.toggleUnit">단위 변경</button>
+    <el-divider direction="vertical"></el-divider>
 
-    <div class="threshold-control">
-      <span> 더움 기준: {{ configStore.hotThresholdLabel }} </span>
-
-      <button @click="configStore.decreaseHotThreshold">-1</button>
-
-      <button @click="configStore.increaseHotThreshold">+1</button>
+    <div class="setting-item">
+      <span class="setting-label">더움 기준</span>
+      <strong>{{ configStore.hotThresholdLabel }}</strong>
+      <el-button-group>
+        <el-button :icon="Minus" aria-label="더움 기준 1도 낮추기" @click="configStore.decreaseHotThreshold"></el-button>
+        <el-button :icon="Plus" aria-label="더움 기준 1도 높이기" @click="configStore.increaseHotThreshold"></el-button>
+      </el-button-group>
     </div>
   </div>
 </template>
@@ -28,30 +35,37 @@ const configStore = useConfigStore();
 .unit-toggler {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f5f7fa;
+  border: 1px solid #e4e7ed;
+  border-radius: 12px;
 }
 
-.unit-toggler > div,
-.threshold-control {
+.setting-item {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.unit-toggler span {
-  font-weight: bold;
+.setting-label {
+  color: #606266;
+  font-size: 13px;
 }
 
-.unit-toggler button {
-  padding: 8px 12px;
-  color: white;
-  background-color: #4b6584;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.unit-toggler :deep(.el-divider--vertical) {
+  height: 28px;
 }
 
-.unit-toggler button:hover {
-  background-color: #34495e;
+@media (max-width: 640px) {
+  .unit-toggler,
+  .setting-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .unit-toggler :deep(.el-divider--vertical) {
+    display: none;
+  }
 }
 </style>

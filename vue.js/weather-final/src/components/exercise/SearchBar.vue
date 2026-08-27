@@ -1,4 +1,6 @@
 <script setup>
+import { Search } from "@element-plus/icons-vue";
+
 defineProps({
   currentQuery: {
     type: String,
@@ -8,34 +10,66 @@ defineProps({
 
 const emit = defineEmits(["update-query"]);
 
-const handleInput = (event) => {
-  emit("update-query", event.target.value);
+const handleInput = (value) => {
+  emit("update-query", value);
 };
 </script>
 
 <template>
   <div class="search-bar">
-    <h3>🔍 도시 검색 (한글 즉시 동기화)</h3>
+    <div class="section-heading">
+      <el-icon><Search /></el-icon>
+      <div>
+        <h3>도시 검색</h3>
+        <p>도시 이름을 입력하면 결과가 즉시 필터링됩니다.</p>
+      </div>
+    </div>
 
-    <input
-      type="text"
-      :value="currentQuery"
+    <el-input
+      :model-value="currentQuery"
       @input="handleInput"
-      placeholder="검색할 도시 이름 입력"
-    />
+      placeholder="예: 서울, 수원, 부산"
+      size="large"
+      clearable
+      :prefix-icon="Search"
+    ></el-input>
 
-    <p>검색 중인 도시: {{ currentQuery }}</p>
+    <el-text v-if="currentQuery" class="query-status" type="info">
+      검색 중인 도시: <strong>{{ currentQuery }}</strong>
+    </el-text>
   </div>
 </template>
 
 <style scoped>
-.search-bar input {
-  width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.search-bar p {
-  margin: 8px 0 0;
+.section-heading > .el-icon {
+  color: #409eff;
+  font-size: 24px;
+}
+
+.section-heading h3,
+.section-heading p {
+  margin: 0;
+}
+
+.section-heading h3 {
+  font-size: 17px;
+}
+
+.section-heading p {
+  margin-top: 2px;
+  color: #909399;
+  font-size: 13px;
+}
+
+.query-status {
+  display: block;
+  margin-top: 10px;
 }
 </style>
